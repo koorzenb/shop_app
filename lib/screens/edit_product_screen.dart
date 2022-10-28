@@ -1,20 +1,34 @@
 import 'package:flutter/material.dart';
 
-class UserProductScreen extends StatefulWidget {
-  const UserProductScreen({Key key}) : super(key: key);
+class EditProductScreen extends StatefulWidget {
+  static const String routename = '/edit-product';
+
+  const EditProductScreen({Key key}) : super(key: key);
 
   @override
-  State<UserProductScreen> createState() => _UserProductScreenState();
+  State<EditProductScreen> createState() => _EditProductScreenState();
 }
 
-class _UserProductScreenState extends State<UserProductScreen> {
+class _EditProductScreenState extends State<EditProductScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Edit Product'),
       ),
-      body: ,
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          child: ListView(
+            children: [
+              TextFormField(
+                decoration: InputDecoration(labelText: 'Title'),
+                textInputAction: TextInputAction.next,
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
