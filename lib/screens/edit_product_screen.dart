@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_complete_guide/providers/product.dart';
 
 class EditProductScreen extends StatefulWidget {
   static const String routename = '/edit-product';
@@ -14,10 +15,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
   final _descriptionFocusNode = FocusNode();
   final _imageUrlFocusNode = FocusNode();
   final _imageUrlController = TextEditingController();
+  final _form = GlobalKey<FormState>();
+  var _editedProduct =
+      Product(id: null, title: '', description: '', price: 0, imageUrl: '');
 
   @override
   void initState() {
-_imageUrlFocusNode.addListener(_updateImageUrl)
+    _imageUrlFocusNode.addListener(_updateImageUrl);
     super.initState();
   }
 
@@ -29,23 +33,34 @@ _imageUrlFocusNode.addListener(_updateImageUrl)
     _imageUrlController.dispose();
     _imageUrlFocusNode.removeListener(_updateImageUrl);
     _imageUrlFocusNode.dispose();
-
   }
 
-void _updateImageUrl() {
-if(_imageUrlFocusNode.hasFocus) {
-  setState(() { });
-}
-}
+  void _updateImageUrl() {
+    if (!_imageUrlFocusNode.hasFocus) {
+      setState(() {});
+    }
+  }
+
+  void _saveForm() {
+    _form.currentState.save();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Edit Product'),
+        actions: [
+          IconButton(
+            onPressed: _saveForm,
+            icon: Icon(Icons.save),
+          )
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
+          key: _form,
           child: ListView(
             children: [
               TextFormField(
@@ -53,6 +68,15 @@ if(_imageUrlFocusNode.hasFocus) {
                 textInputAction: TextInputAction.next,
                 onFieldSubmitted: (value) {
                   FocusScope.of(context).requestFocus(_priceFocusNode);
+                },
+                onSaved: (newValue) {
+                  _editedProduct = Product(
+                    id: null,
+                    title: newValue,
+                    description: _editedProduct.description,
+                    price: _editedProduct.price,
+                    imageUrl: _editedProduct.imageUrl,
+                  );
                 },
               ),
               TextFormField(
@@ -63,12 +87,30 @@ if(_imageUrlFocusNode.hasFocus) {
                 onFieldSubmitted: (value) {
                   FocusScope.of(context).requestFocus(_descriptionFocusNode);
                 },
+                onSaved: (newValue) {
+                  _editedProduct = Product(
+                    id: null,
+                    title: _editedProduct.title,
+                    description: _editedProduct.description,
+                    price: double.parse(newValue),
+                    imageUrl: _editedProduct.imageUrl,
+                  );
+                },
               ),
               TextFormField(
                 decoration: InputDecoration(labelText: 'Description'),
                 maxLines: 3,
                 keyboardType: TextInputType.multiline,
                 focusNode: _descriptionFocusNode,
+                onSaved: (newValue) {
+                  _editedProduct = Product(
+                    id: null,
+                    title: _editedProduct.title,
+                    description: newValue,
+                    price: _editedProduct.price,
+                    imageUrl: _editedProduct.imageUrl,
+                  );
+                },
               ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -88,6 +130,7 @@ if(_imageUrlFocusNode.hasFocus) {
                     child: _imageUrlController.text.isEmpty
                         ? Text('Enter a URL')
                         : FittedBox(
+                            // https://pixabay.com/photos/birds-sunset-clouds-sky-trees-5101153/
                             child: Image.network(
                               _imageUrlController.text,
                               fit: BoxFit.cover,
@@ -103,6 +146,18 @@ if(_imageUrlFocusNode.hasFocus) {
                     focusNode: _imageUrlFocusNode,
                     onEditingComplete: () {
                       setState(() {});
+                    },
+                    onFieldSubmitted: (_) {
+                      _saveForm();
+                    },
+                    onSaved: (newValue) {
+                      _editedProduct = Product(
+                        id: null,
+                        title: _editedProduct.title,
+                        description: _editedProduct.description,
+                        price: _editedProduct.price,
+                        imageUrl: newValue,
+                      );
                     },
                   )),
                 ],
