@@ -67,7 +67,8 @@ class Products with ChangeNotifier {
 
   void addProduct(product) {
     final url = Uri.https('shop-app-4c7e3-default-rtdb.firebaseio.com', '/products.json');
-    http.post(
+    http
+        .post(
       url,
       body: json.encode(
         {
@@ -78,17 +79,18 @@ class Products with ChangeNotifier {
           'isFavourite': product.isFavourite,
         },
       ),
-    );
-
-    final newProduct = Product(
-      id: DateTime.now().toString(),
-      title: product.title,
-      description: product.description,
-      price: product.price,
-      imageUrl: product.imageUrl,
-    );
-    _items.add(newProduct);
-    notifyListeners();
+    )
+        .then((response) {
+      final newProduct = Product(
+        id: jsonDecode(response.body)['name'],
+        title: product.title,
+        description: product.description,
+        price: product.price,
+        imageUrl: product.imageUrl,
+      );
+      _items.add(newProduct);
+      notifyListeners();
+    });
   }
 
   void updateProduct(String id, Product newProduct) {
