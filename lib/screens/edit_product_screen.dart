@@ -39,16 +39,18 @@ class _EditProductScreenState extends State<EditProductScreen> {
     super.initState();
   }
 
+  @override
   void didChangeDependencies() {
     if (_isInit) {
       final productId = ModalRoute.of(context).settings.arguments as String;
       if (productId != null) {
-        _editedProduct =
-            Provider.of<Products>(context, listen: false).findById(productId);
+        _editedProduct = Provider.of<Products>(context, listen: false).findById(productId);
         _initValues = {
           'title': _editedProduct.title,
           'description': _editedProduct.description,
           'price': _editedProduct.price.toString(),
+          // 'imageUrl': _editedProduct.imageUrl,
+          'imageUrl': '',
         };
         _imageUrlController.text = _editedProduct.imageUrl;
       }
@@ -69,11 +71,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
   void _updateImageUrl() {
     if (!_imageUrlFocusNode.hasFocus) {
-      if ((!_imageUrlController.text.startsWith('http') &&
-              !_imageUrlController.text.startsWith('https')) ||
-          (!_imageUrlController.text.endsWith('.png') &&
-              !_imageUrlController.text.endsWith('.jpg') &&
-              !_imageUrlController.text.endsWith('.jpeg'))) {
+      if ((!_imageUrlController.text.startsWith('http') && !_imageUrlController.text.startsWith('https')) ||
+          (!_imageUrlController.text.endsWith('.png') && !_imageUrlController.text.endsWith('.jpg') && !_imageUrlController.text.endsWith('.jpeg'))) {
         return;
       }
       setState(() {});
@@ -85,8 +84,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     if (!isValid) return;
     _form.currentState.save();
     if (_editedProduct.id != null) {
-      Provider.of<Products>(context, listen: false)
-          .updateProduct(_editedProduct.id, _editedProduct);
+      Provider.of<Products>(context, listen: false).updateProduct(_editedProduct.id, _editedProduct);
     } else {
       Provider.of<Products>(context, listen: false).addProduct(_editedProduct);
     }
@@ -100,8 +98,8 @@ class _EditProductScreenState extends State<EditProductScreen> {
         title: Text('Edit Product'),
         actions: [
           IconButton(
-            onPressed: _saveForm,
             icon: Icon(Icons.save),
+            onPressed: _saveForm,
           )
         ],
       ),
@@ -115,25 +113,23 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 initialValue: _initValues['title'],
                 decoration: InputDecoration(labelText: 'Title'),
                 textInputAction: TextInputAction.next,
-                onFieldSubmitted: (value) {
+                onFieldSubmitted: (_) {
                   FocusScope.of(context).requestFocus(_priceFocusNode);
                 },
                 validator: (value) {
                   if (value.isEmpty) {
                     return 'Please provide a value';
-                  } else {
-                    return null;
                   }
-                  ;
+                  return null;
                 },
                 onSaved: (newValue) {
                   _editedProduct = Product(
+                    title: newValue,
+                    price: _editedProduct.price,
+                    description: _editedProduct.description,
+                    imageUrl: _editedProduct.imageUrl,
                     id: _editedProduct.id,
                     isFavourite: _editedProduct.isFavourite,
-                    title: newValue,
-                    description: _editedProduct.description,
-                    price: _editedProduct.price,
-                    imageUrl: _editedProduct.imageUrl,
                   );
                 },
               ),
@@ -177,7 +173,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 focusNode: _descriptionFocusNode,
                 validator: (value) {
                   if (value.isEmpty) return 'Please enter a descripion';
-                  if (value.length <= 10) {
+                  if (value.length < 10) {
                     return 'Should be at least 10 characters long';
                   }
                   return null;
@@ -204,10 +200,11 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       right: 10,
                     ),
                     decoration: BoxDecoration(
-                        border: Border.all(
-                      width: 1,
-                      color: Colors.grey,
-                    )),
+                      border: Border.all(
+                        width: 1,
+                        color: Colors.grey,
+                      ),
+                    ),
                     child: _imageUrlController.text.isEmpty
                         ? Text('Enter a URL')
                         : FittedBox(
@@ -220,15 +217,11 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   ),
                   Expanded(
                       child: TextFormField(
-                    initialValue: _initValues['imageUrl'],
                     decoration: InputDecoration(labelText: 'Image URL'),
                     keyboardType: TextInputType.url,
                     textInputAction: TextInputAction.done,
                     controller: _imageUrlController,
                     focusNode: _imageUrlFocusNode,
-                    onEditingComplete: () {
-                      setState(() {});
-                    },
                     onFieldSubmitted: (_) {
                       _saveForm();
                     },
@@ -236,13 +229,10 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       if (value.isEmpty) {
                         return 'Please enter an image URL.';
                       }
-                      if (!value.startsWith('http') &&
-                          !value.startsWith('https')) {
+                      if (!value.startsWith('http') && !value.startsWith('https')) {
                         return 'Please enter a valid URL.';
                       }
-                      if (!value.endsWith('.png') &&
-                          !value.endsWith('.jpg') &&
-                          !value.endsWith('.jpeg')) {
+                      if (!value.endsWith('.png') && !value.endsWith('.jpg') && !value.endsWith('.jpeg')) {
                         return 'URL should end with .png or .jpg.';
                       }
                       return null;
