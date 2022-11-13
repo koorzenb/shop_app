@@ -6,7 +6,7 @@ import 'package:flutter_complete_guide/widgets/user_product_item.dart';
 import 'package:provider/provider.dart';
 
 class UserProductsScreen extends StatelessWidget {
-  static String routename = '/user-products-screen';
+  static String routeName = '/user-products-screen';
 
   const UserProductsScreen({Key key}) : super(key: key);
 
@@ -18,8 +18,7 @@ class UserProductsScreen extends StatelessWidget {
           title: Text('Your Products'),
           actions: [
             IconButton(
-              onPressed: () =>
-                  Navigator.of(context).pushNamed(EditProductScreen.routename),
+              onPressed: () => Navigator.of(context).pushNamed(EditProductScreen.routeName),
               icon: Icon(Icons.add),
             )
           ],
