@@ -65,6 +65,15 @@ class Products with ChangeNotifier {
     // notifyListeners();
   }
 
+  Future<void> fetchAndSetProducts() async {
+    final url = Uri.https('shop-app-4c7e3-default-rtdb.firebaseio.com', '/products.json');
+    try {
+      final response = http.get(url);
+    } on Exception catch (e) {
+      // TODO
+    }
+  }
+
   Future<void> addProduct(product) async {
     final url = Uri.https('shop-app-4c7e3-default-rtdb.firebaseio.com', '/products.json');
     try {
