@@ -20,7 +20,7 @@ class ProductsOverviewScreen extends StatefulWidget {
 
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   bool showOnlyFavorites = false;
-  bool _isInit;
+  bool _isInit = true;
 
   @override
   void didChangeDependencies() {
