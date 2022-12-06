@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:http/http.dart' as http;
 
 class Product with ChangeNotifier {
@@ -37,6 +36,7 @@ class Product with ChangeNotifier {
       if (response.statusCode >= 400) {
         _setFavValue(oldStatus);
       }
+      // ignore: unused_catch_clause
     } on Exception catch (e) {
       _setFavValue(oldStatus);
     }
