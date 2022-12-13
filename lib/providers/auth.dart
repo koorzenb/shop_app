@@ -10,7 +10,10 @@ class Auth with ChangeNotifier {
 
   Future<void> signup(String email, String password) async {
     // get API key from https://console.firebase.google.com/project/shop-app-4c7e3/settings/general
-    final url = Uri.http('https://identitytoolkit.googleapis.com', '/v1/accounts:signInWithCustomToken?key=AIzaSyDWyi-hyZrOemrzXMjY5KHJwku9b87z6WI');
+    const params = {
+      'key': 'AIzaSyDWyi-hyZrOemrzXMjY5KHJwku9b87z6WI',
+    };
+    final url = Uri.https('identitytoolkit.googleapis.com', '/v1/accounts:signUp', params);
     final response = await http.post(
       url,
       body: json.encode({
@@ -19,5 +22,6 @@ class Auth with ChangeNotifier {
         'returnSecureToken': true,
       }),
     );
+    print(response.body);
   }
 }
