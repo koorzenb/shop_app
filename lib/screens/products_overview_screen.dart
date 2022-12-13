@@ -55,19 +55,19 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
                 }
               });
             },
+            icon: Icon(
+              Icons.more_vert,
+            ),
             itemBuilder: (_) => [
               PopupMenuItem(
                 child: Text('Only Favourites'),
                 value: FilterOptions.Favorites,
               ),
               PopupMenuItem(
-                child: Text('Show all'),
+                child: Text('Show All'),
                 value: FilterOptions.All,
-              )
+              ),
             ],
-            icon: Icon(
-              Icons.more_vert,
-            ),
           ),
           Consumer<Cart>(
             builder: (_, cart, ch) => Badge(
@@ -75,12 +75,14 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
               value: cart.itemCount.toString(),
             ),
             child: IconButton(
-              onPressed: () => Navigator.of(context).pushNamed(CartScreen.routeName),
               icon: Icon(
                 Icons.shopping_cart,
               ),
+              onPressed: () {
+                Navigator.of(context).pushNamed(CartScreen.routeName);
+              },
             ),
-          )
+          ),
         ],
       ),
       drawer: AppDrawer(),

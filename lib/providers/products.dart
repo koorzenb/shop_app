@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import '../models/http_exceptions.dart';
 import 'package:http/http.dart' as http;
 
+import '../models/http_exceptions.dart';
 import 'product.dart';
 
 class Products with ChangeNotifier {
@@ -116,27 +116,24 @@ class Products with ChangeNotifier {
       );
       _items.add(newProduct);
       notifyListeners();
-    } on Exception catch (e) {
-      throw e;
+    } catch (error) {
+      print(error);
+      throw error;
     }
   }
 
-  void updateProduct(String id, Product newProduct) async {
-    final index = _items.indexWhere((element) => element.id == id);
-    if (index >= 0) {
+  Future<void> updateProduct(String id, Product newProduct) async {
+    final prodIndex = _items.indexWhere((prod) => prod.id == id);
+    if (prodIndex >= 0) {
       final url = Uri.https('shop-app-4c7e3-default-rtdb.firebaseio.com', '/products/$id.json');
-      await http.patch(
-        url,
-        body: json.encode(
-          {
+      await http.patch(url,
+          body: json.encode({
             'title': newProduct.title,
             'description': newProduct.description,
             'imageUrl': newProduct.imageUrl,
             'price': newProduct.price,
-          },
-        ),
-      );
-      _items[index] = newProduct;
+          }));
+      _items[prodIndex] = newProduct;
       notifyListeners();
     } else {
       print('...');
