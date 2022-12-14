@@ -8,12 +8,11 @@ class Auth with ChangeNotifier {
   DateTime _expiryDate;
   String _userId;
 
-  Future<void> signup(String email, String password) async {
-    // get API key from https://console.firebase.google.com/project/shop-app-4c7e3/settings/general
+  Future<void> _authenticate(String email, String password, String urlSegment) async {
     const params = {
       'key': 'AIzaSyDWyi-hyZrOemrzXMjY5KHJwku9b87z6WI',
     };
-    final url = Uri.https('identitytoolkit.googleapis.com', '/v1/accounts:signUp', params);
+    final url = Uri.https('identitytoolkit.googleapis.com', '/v1/accounts:$urlSegment', params);
     final response = await http.post(
       url,
       body: json.encode({
@@ -23,5 +22,15 @@ class Auth with ChangeNotifier {
       }),
     );
     print(response.body);
+  }
+
+  Future<void> signup(String email, String password) async {
+    // get API key from https://console.firebase.google.com/project/shop-app-4c7e3/settings/general
+    // rest api docs: https://firebase.google.com/docs/reference/rest/auth
+    return _authenticate(email, password, 'signUp');
+  }
+
+  Future<void> login(String email, String password) async {
+    return _authenticate(email, password, 'signInWithPassword');
   }
 }
