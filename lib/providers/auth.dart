@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/widgets.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 
 class Auth with ChangeNotifier {
@@ -9,8 +10,9 @@ class Auth with ChangeNotifier {
   String _userId;
 
   Future<void> _authenticate(String email, String password, String urlSegment) async {
-    const params = {
-      'key': 'AIzaSyDWyi-hyZrOemrzXMjY5KHJwku9b87z6WI',
+    final key = dotenv.env['APIKEY'];
+    final params = {
+      'key': '$key',
     };
     final url = Uri.https('identitytoolkit.googleapis.com', '/v1/accounts:$urlSegment', params);
     final response = await http.post(
