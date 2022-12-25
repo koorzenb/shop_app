@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_complete_guide/screens/auth_screen.dart';
+import 'package:flutter_complete_guide/screens/products_overview_screen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'providers/auth.dart';
 import 'screens/edit_product_screen.dart';
@@ -22,34 +23,35 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-          create: (ctx) => Auth(),
-        ),
-        ChangeNotifierProvider(
-          create: (ctx) => Products(),
-        ),
-        ChangeNotifierProvider(
-          create: (ctx) => Cart(),
-        ),
-        ChangeNotifierProvider(
-          create: (ctx) => Orders(),
-        ),
-      ],
-      child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: 'MyShop',
-          theme: ThemeData(
-              colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.purple).copyWith(secondary: Colors.deepOrange),
-              textTheme: TextTheme(titleMedium: TextStyle(color: Colors.deepOrangeAccent))),
-          home: AuthScreen(),
-          routes: {
-            ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
-            CartScreen.routeName: (ctx) => CartScreen(),
-            OrdersScreen.routeName: (ctx) => OrdersScreen(),
-            UserProductsScreen.routeName: (ctx) => UserProductsScreen(),
-            EditProductScreen.routeName: (ctx) => EditProductScreen(),
-          }),
-    );
+        providers: [
+          ChangeNotifierProvider(
+            create: (ctx) => Auth(),
+          ),
+          ChangeNotifierProvider(
+            create: (ctx) => Products(),
+          ),
+          ChangeNotifierProvider(
+            create: (ctx) => Cart(),
+          ),
+          ChangeNotifierProvider(
+            create: (ctx) => Orders(),
+          ),
+        ],
+        child: Consumer<Auth>(
+          builder: (ctx, auth, _) => MaterialApp(
+              debugShowCheckedModeBanner: false,
+              title: 'MyShop',
+              theme: ThemeData(
+                  colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.purple).copyWith(secondary: Colors.deepOrange),
+                  textTheme: TextTheme(titleMedium: TextStyle(color: Colors.deepOrangeAccent))),
+              home: auth.isAuth ? ProductsOverviewScreen() : AuthScreen(),
+              routes: {
+                ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
+                CartScreen.routeName: (ctx) => CartScreen(),
+                OrdersScreen.routeName: (ctx) => OrdersScreen(),
+                UserProductsScreen.routeName: (ctx) => UserProductsScreen(),
+                EditProductScreen.routeName: (ctx) => EditProductScreen(),
+              }),
+        ));
   }
 }
