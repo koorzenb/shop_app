@@ -73,11 +73,21 @@ class Products with ChangeNotifier {
   // }
 
   Future<void> fetchAndSetProducts([bool filteredByUser = false]) async {
-    var _params = {
-      'auth': authToken,
-      'orderBy': filteredByUser ? json.encode("creatorId") : '',
-      'equalTo': filteredByUser ? json.encode(userId) : '',
-    };
+    var _params;
+
+    if (filteredByUser) {
+      _params = <String, String>{
+        'auth': authToken,
+        'orderBy': json.encode("creatorId"),
+        'equalTo': json.encode(userId),
+      };
+    }
+
+    if (filteredByUser == false) {
+      _params = <String, String>{
+        'auth': authToken,
+      };
+    }
 
     var url = Uri.https('shop-app-4c7e3-default-rtdb.firebaseio.com', '/products.json', _params);
     try {
