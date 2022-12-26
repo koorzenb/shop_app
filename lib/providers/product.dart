@@ -26,11 +26,12 @@ class Product with ChangeNotifier {
     notifyListeners();
   }
 
-  toggleFavouriteStatus() async {
+  toggleFavouriteStatus(String token) async {
     final oldStatus = isFavourite;
     isFavourite = !isFavourite;
     notifyListeners();
-    final url = Uri.https('shop-app-4c7e3-default-rtdb.firebaseio.com', '/products/$id.json');
+    final _params = {'auth': token};
+    final url = Uri.https('shop-app-4c7e3-default-rtdb.firebaseio.com', '/products/$id.json', _params);
     try {
       final response = await http.patch(url, body: jsonEncode({'isFavourite': isFavourite}));
       if (response.statusCode >= 400) {
