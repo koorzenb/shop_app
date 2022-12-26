@@ -72,9 +72,11 @@ class Products with ChangeNotifier {
   //   notifyListeners();
   // }
 
-  Future<void> fetchAndSetProducts() async {
+  Future<void> fetchAndSetProducts([bool filteredByUser = false]) async {
     var _params = {
       'auth': authToken,
+      'orderBy': filteredByUser ? json.encode("creatorId") : '',
+      'equalTo': filteredByUser ? json.encode(userId) : '',
     };
 
     var url = Uri.https('shop-app-4c7e3-default-rtdb.firebaseio.com', '/products.json', _params);
@@ -120,6 +122,7 @@ class Products with ChangeNotifier {
           'description': product.description,
           'imageUrl': product.imageUrl,
           'price': product.price,
+          'creatorId': userId,
         }),
       );
       final newProduct = Product(
