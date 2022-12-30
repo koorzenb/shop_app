@@ -102,7 +102,7 @@ class _AuthCardState extends State<AuthCard> with SingleTickerProviderStateMixin
   var _isLoading = false;
   final _passwordController = TextEditingController();
   AnimationController _controller;
-  Animation<Size> _heightAnimation;
+  Animation<Offset> _slideAnimation;
   Animation<double> _opacityAnimation;
 
   @override
@@ -114,9 +114,9 @@ class _AuthCardState extends State<AuthCard> with SingleTickerProviderStateMixin
         milliseconds: 300,
       ),
     );
-    _heightAnimation = Tween<Size>(
-      begin: Size(double.infinity, 260),
-      end: Size(double.infinity, 320),
+    _slideAnimation = Tween<Offset>(
+      begin: Offset(0, -1.5),
+      end: Offset(0, 0),
     ).animate(
       CurvedAnimation(
         parent: _controller,
@@ -260,21 +260,28 @@ class _AuthCardState extends State<AuthCard> with SingleTickerProviderStateMixin
                 ),
                 if (_authMode == AuthMode.Signup)
                   AnimatedContainer(
+                    constraints: BoxConstraints(
+                      minHeight: _authMode == AuthMode.Signup ? 60 : 0,
+                      maxHeight: _authMode == AuthMode.Signup ? 120 : 0,
+                    ),
                     duration: Duration(milliseconds: 300),
-                    constraints: BoxConstraints(minHeight: _authMode == AuthMode.Signup ? 60 : 0, maxHeight: _authMode == AuthMode.Signup ? 120 : 0),
+                    curve: Curves.easeIn,
                     child: FadeTransition(
                       opacity: _opacityAnimation,
-                      child: TextFormField(
-                        enabled: _authMode == AuthMode.Signup,
-                        decoration: InputDecoration(labelText: 'Confirm Password'),
-                        obscureText: true,
-                        validator: _authMode == AuthMode.Signup
-                            ? (value) {
-                                if (value != _passwordController.text) {
-                                  return 'Passwords do not match!';
+                      child: SlideTransition(
+                        position: _slideAnimation,
+                        child: TextFormField(
+                          enabled: _authMode == AuthMode.Signup,
+                          decoration: InputDecoration(labelText: 'Confirm Password'),
+                          obscureText: true,
+                          validator: _authMode == AuthMode.Signup
+                              ? (value) {
+                                  if (value != _passwordController.text) {
+                                    return 'Passwords do not match!';
+                                  }
                                 }
-                              }
-                            : null,
+                              : null,
+                        ),
                       ),
                     ),
                   ),
